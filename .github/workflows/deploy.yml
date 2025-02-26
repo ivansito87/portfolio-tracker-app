@@ -25,7 +25,6 @@ jobs:
       - name: Install dependencies
         run: |
           cd server
-          go mod init github.com/ivansito87/portfolio-tracker-app
           go mod tidy
 
       - name: Build & Test
