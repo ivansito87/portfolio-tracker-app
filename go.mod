@@ -1,6 +1,6 @@
 module github.com/ivansito87/portfolio-tracker-app
 
-go 1.18
+go 1.23.5
 
 require (
 	github.com/gin-contrib/cors v1.5.0
