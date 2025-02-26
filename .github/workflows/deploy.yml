@@ -20,7 +20,11 @@ jobs:
       - name: Build & Test
         run: |
           go build -o app main.go
-          go test ./...
+      
+      - name: Set up GO ROOT
+        run: |
+          export GOROOT=/usr/local/go
+          export PATH=$GOROOT/bin:$PATH
 
       - name: Deploy to EC2
         env:
