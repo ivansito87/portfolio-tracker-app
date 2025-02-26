@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import { AppBar, Toolbar, Button, Container, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
+import { AppBar, Toolbar, Button, Container, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Alert } from "@mui/material";
 
 interface Transaction {
-  id: number;
   date: string;
   amount: number;
   type: string;
@@ -11,37 +10,54 @@ interface Transaction {
 
 const Portfolio = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("http://localhost:8080/transactions")
-      .then((response) => response.json())
-      .then((data) => setTransactions(data))
-      .catch((error) => console.error("Error fetching transactions:", error));
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setTransactions(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error.message);
+        setLoading(false);
+      });
   }, []);
 
   return (
     <Container>
       <h1 className="text-2xl font-bold">Portfolio</h1>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Date</TableCell>
-              <TableCell>Amount ($)</TableCell>
-              <TableCell>Type</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {transactions.map((transaction, index) => (
-              <TableRow key={index}>
-                <TableCell>{transaction.date}</TableCell>
-                <TableCell>{transaction.amount.toLocaleString()}</TableCell>
-                <TableCell>{transaction.type}</TableCell>
+      {loading && <CircularProgress />}
+      {error && <Alert severity="error">{error}</Alert>}
+      {!loading && !error && (
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Date</TableCell>
+                <TableCell>Amount ($)</TableCell>
+                <TableCell>Type</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {transactions.map((transaction, index) => (
+                <TableRow key={index}>
+                  <TableCell>{transaction.date}</TableCell>
+                  <TableCell>{transaction.amount.toLocaleString()}</TableCell>
+                  <TableCell>{transaction.type}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
     </Container>
   );
 };
