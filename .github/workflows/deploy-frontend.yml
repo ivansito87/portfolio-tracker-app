@@ -29,7 +29,8 @@ jobs:
           EC2_CLIENT_IP: ${{ secrets.EC2_CLIENT_IP }}
           AWS_CLIENT_PRIVATE_KEY: ${{ secrets.AWS_CLIENT_PRIVATE_KEY }}
         run: |
-          echo "$AWS_CLIENT_PRIVATE_KEY" > front-end-server.pem
           cd client
+          chmod 600 front-end-server.pem
+          echo "$AWS_CLIENT_PRIVATE_KEY" > front-end-server.pem
           scp -o StrictHostKeyChecking=no -i front-end-server.pem -r ./build/* ubuntu@$EC2_CLIENT_IP:/var/www/html/frontend/
           ssh -o StrictHostKeyChecking=no -i front-end-server.pem ubuntu@$EC2_CLIENT_IP "sudo systemctl restart nginx"
