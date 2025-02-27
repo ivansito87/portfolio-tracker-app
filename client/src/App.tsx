@@ -8,7 +8,7 @@ interface Transaction {
   type: string;
 }
 const fetchOptions = {
-  method: 'POST' as const,
+  method: 'GET' as const,
   mode: 'no-cors' as const,
   headers: {
     'Content-Type': 'application/json'
