@@ -13,7 +13,6 @@ const fetchOptions = {
   headers: {
     'Content-Type': 'application/json'
   },
-  body: JSON.stringify({"key" : "some text"})
 }
 const Portfolio = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
