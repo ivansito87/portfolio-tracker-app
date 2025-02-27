@@ -20,7 +20,7 @@ jobs:
       - name: Build & Test
         run: |
           cd server
-          go build -o app main.go
+          CGO_ENABLED=0 go build -o app main.go
           # go test ./...
 
       - name: Deploy to EC2
@@ -33,3 +33,4 @@ jobs:
           lsof -t -i:8080 | xargs -r kill
           scp -o StrictHostKeyChecking=no -i private_key.pem server/app ec2-user@$EC2_IP:~/
           ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$EC2_IP "nohup ./app > output.log 2>&1 &"
+
