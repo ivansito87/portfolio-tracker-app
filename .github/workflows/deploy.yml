@@ -28,6 +28,7 @@ jobs:
           AWS_PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY }}
         run: |
           echo "$AWS_PRIVATE_KEY" > private_key.pem
+          echo "pwd: $(pwd)"
           chmod 600 private_key.pem
           scp -o StrictHostKeyChecking=no -i private_key.pem server ec2-user@$EC2_IP:~/server
           ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$EC2_IP "nohup ~/server &"
