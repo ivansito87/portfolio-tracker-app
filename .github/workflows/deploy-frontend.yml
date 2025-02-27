@@ -29,7 +29,7 @@ jobs:
           EC2_CLIENT_IP: ${{ secrets.EC2_CLIENT_IP }}
           AWS_CLIENT_PRIVATE_KEY: ${{ secrets.AWS_CLIENT_PRIVATE_KEY }}
         run: |
-          echo "$AWS_CLIENT_PRIVATE_KEY" > private_key.pem
-          chmod 600 private_key.pem
-          scp -o StrictHostKeyChecking=no -i private_key.pem -r build/* ubuntu@$EC2_CLIENT_IP:/var/www/html/frontend/
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@$EC2_CLIENT_IP "sudo systemctl restart nginx"
+          echo "$AWS_CLIENT_PRIVATE_KEY" > web-server.pem
+          chmod 600 web-server.pem
+          scp -o StrictHostKeyChecking=no -i web-server.pem -r build/* ubuntu@$EC2_CLIENT_IP:/var/www/html/frontend/
+          ssh -o StrictHostKeyChecking=no -i web-server.pem ubuntu@$EC2_CLIENT_IP "sudo systemctl restart nginx"
