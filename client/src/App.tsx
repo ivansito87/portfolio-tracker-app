@@ -7,14 +7,21 @@ interface Transaction {
   amount: number;
   type: string;
 }
-
+const fetchOptions = {
+  method: 'POST' as const,
+  mode: 'no-cors' as const,
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({"key" : "some text"})
+}
 const Portfolio = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("http://3.145.169.224:8080/api/transactions")
+    fetch("http://3.145.169.224:8080/api/transactions", fetchOptions)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
