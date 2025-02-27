@@ -19,7 +19,8 @@ jobs:
 
       - name: Build & Test
         run: |
-          go build -o server main.go
+          cd server
+          go build -o app main.go
           # go test ./...
 
       - name: Deploy to EC2
@@ -29,5 +30,5 @@ jobs:
         run: |
           echo "$AWS_PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
-          scp -o StrictHostKeyChecking=no -i private_key.pem server ec2-user@$EC2_IP:~/backend/
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$EC2_IP "nohup ~/backend/server &"
+          scp -o StrictHostKeyChecking=no -i private_key.pem app ec2-user@$EC2_IP:~/backend/
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$EC2_IP "nohup ~/backend/app &"
