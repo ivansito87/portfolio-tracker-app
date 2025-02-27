@@ -32,7 +32,3 @@ jobs:
           chmod 600 private_key.pem
           scp -o StrictHostKeyChecking=no -i private_key.pem app ec2-user@$EC2_IP:~/
           ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$EC2_IP "nohup go run main.go > output.log 2>&1 &"
-
-
-
-          # scp -i web-server.pem -r /Users/sonidoeclipse/Developer/GitHub/portfolio-tracker-app/server ec2-user@3.145.169.224:~/
