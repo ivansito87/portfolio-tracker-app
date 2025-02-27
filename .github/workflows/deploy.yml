@@ -19,8 +19,9 @@ jobs:
 
       - name: Build & Test
         run: |
-          cd server
-          go build -o server main.go
+          # cd server
+          # go build -o server main.go
+          go build -o main.go
 
       - name: Deploy to EC2
         env:
