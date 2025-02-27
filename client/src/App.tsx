@@ -14,7 +14,7 @@ const Portfolio = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("http://localhost:8080/transactions")
+    fetch("http://localhost:8080/api/transactions")
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
