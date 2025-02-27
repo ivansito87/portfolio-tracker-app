@@ -16,21 +16,11 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: 1.18
-          
-      - name: Set up GO ROOT
-        run: |
-          export GOROOT=/usr/local/go
-          export PATH=$GOROOT/bin:$PATH
-
-      - name: Install dependencies
-        run: |
-          cd server
-          # go mod tidy
 
       - name: Build & Test
         run: |
+          cd server
           go build -o app main.go
-      
 
       - name: Deploy to EC2
         env:
