@@ -15,13 +15,12 @@ jobs:
       - name: Install Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.23
+          go-version: 1.18
 
       - name: Build & Test
         run: |
-          # cd server
-          # go build -o server main.go
-          go build -o main.go
+          go build -o app main.go
+          # go test ./...
 
       - name: Deploy to EC2
         env:
@@ -29,7 +28,6 @@ jobs:
           AWS_PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY }}
         run: |
           echo "$AWS_PRIVATE_KEY" > private_key.pem
-          echo "pwd: $(pwd)"
           chmod 600 private_key.pem
-          scp -o StrictHostKeyChecking=no -i private_key.pem server ec2-user@$EC2_IP:~/server
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$EC2_IP "nohup ~/server &"
+          scp -o StrictHostKeyChecking=no -i private_key.pem app ec2-user@$EC2_IP:~/backend/
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$EC2_IP "nohup ~/backend/app &"
