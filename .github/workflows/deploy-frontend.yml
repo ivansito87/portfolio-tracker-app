@@ -30,7 +30,7 @@ jobs:
           AWS_CLIENT_PRIVATE_KEY: ${{ secrets.AWS_CLIENT_PRIVATE_KEY }}
         run: |
           echo "$AWS_CLIENT_PRIVATE_KEY" > front-end-server.pem
-          chmod 777 front-end-server.pem
+          chmod 600 front-end-server.pem
           ls -la
           cd client
           scp -o StrictHostKeyChecking=no -i front-end-server.pem -r ./build/* ubuntu@$EC2_CLIENT_IP:/var/www/html/frontend/
