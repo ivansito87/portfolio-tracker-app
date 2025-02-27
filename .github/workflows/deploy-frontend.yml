@@ -22,7 +22,7 @@ jobs:
         run: |
           cd client
           npm install
-          npm run build
+          npm run build+
 
       - name: Deploy to EC2
         env:
@@ -31,5 +31,6 @@ jobs:
         run: |
           echo "$AWS_CLIENT_PRIVATE_KEY" > web-server.pem
           chmod 600 web-server.pem
+          ls -la
           scp -o StrictHostKeyChecking=no -i web-server.pem -r build/* ubuntu@$EC2_CLIENT_IP:/var/www/html/frontend/
           ssh -o StrictHostKeyChecking=no -i web-server.pem ubuntu@$EC2_CLIENT_IP "sudo systemctl restart nginx"
