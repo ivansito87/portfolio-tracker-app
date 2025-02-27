@@ -33,5 +33,6 @@ jobs:
           chmod 600 web-server.pem
           ls -la
           cd client
+          chmod 755 web-server.pem
           scp -o StrictHostKeyChecking=no -i web-server.pem -r ./build/* ubuntu@$EC2_CLIENT_IP:/var/www/html/frontend/
           ssh -o StrictHostKeyChecking=no -i web-server.pem ubuntu@$EC2_CLIENT_IP "sudo systemctl restart nginx"
