@@ -33,4 +33,3 @@ jobs:
           lsof -t -i:8080 | xargs -r kill
           scp -o StrictHostKeyChecking=no -i private_key.pem server/app ec2-user@$EC2_IP:~/
           ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$EC2_IP "nohup ./app > output.log 2>&1 &"
-

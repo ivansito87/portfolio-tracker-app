@@ -7,22 +7,16 @@ interface Transaction {
   amount: number;
   type: string;
 }
-const fetchOptions = {
-  method: 'GET' as const,
-  mode: 'no-cors' as const,
-  headers: {
-    'Content-Type': 'application/json'
-  },
-}
 const Portfolio = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("http://3.145.169.224:8080/api/transactions", fetchOptions)
+    fetch("http://a1fa2facba8354a6f9efc5ec80de6d11-2103900488.us-east-2.elb.amazonaws.com/api/transactions")
       .then((response) => {
-        if (!response.ok) {
+        console.log(response);
+        if (response.status !== 200) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         return response.json();
