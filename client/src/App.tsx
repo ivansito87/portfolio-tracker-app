@@ -11,7 +11,7 @@ const Portfolio = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  // TODO: change to the correct url
   useEffect(() => {
     fetch("http://a1fa2facba8354a6f9efc5ec80de6d11-2103900488.us-east-2.elb.amazonaws.com/api/transactions")
       .then((response) => {
