@@ -1,35 +1,61 @@
-name: Deploy Golang Backend
+name: Deploy Backend to EC2
 
 on:
   push:
-    branches:
-      - main  # Triggers deployment when pushing to 'main'
+    branches: [ main ]
+    paths:
+      - 'server/**'
+      - '.github/workflows/deploy.yml'
 
 jobs:
-  build-test-deploy:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - name: Install Go
-        uses: actions/setup-go@v2
+      - name: Set up Go
+        uses: actions/setup-go@v4
         with:
-          go-version: 1.21
+          go-version: '1.21'
 
-      - name: Build & Test
+      - name: Create SSH directory
+        run: mkdir -p ~/.ssh
+
+      - name: Save SSH private key
         run: |
-          cd server
-          CGO_ENABLED=0 go build -o app main.go
-          # go test ./...
+          echo "${{ secrets.AWS_PRIVATE_KEY }}" > ~/.ssh/private_key.pem
+          chmod 600 ~/.ssh/private_key.pem
+
+      - name: Build Go application
+        working-directory: ./server
+        run: |
+          go mod tidy
+          GOOS=linux GOARCH=amd64 go build -o app
+
+      - name: Create remote directory
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/private_key.pem ec2-user@${{ secrets.EC2_IP }} "mkdir -p ~/backend"
+
+      - name: Copy binary to EC2
+        run: |
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/private_key.pem ./server/app ec2-user@${{ secrets.EC2_IP }}:~/backend/
 
       - name: Deploy to EC2
-        env:
-          EC2_IP: ${{ secrets.EC2_IP }}
-          AWS_PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY }}
         run: |
-          echo "$AWS_PRIVATE_KEY" > private_key.pem
-          chmod 600 private_key.pem
-          lsof -t -i:8080 | xargs -r kill
-          scp -o StrictHostKeyChecking=no -i private_key.pem server/app ec2-user@$EC2_IP:~/
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ec2-user@$EC2_IP "nohup ./app > output.log 2>&1 &"
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/private_key.pem ec2-user@${{ secrets.EC2_IP }} '
+            cd ~/backend
+            chmod +x app
+            # Kill any existing process on port 8080
+            sudo lsof -t -i:8080 | xargs -r kill -9
+            # Start the application in the background
+            nohup ./app > output.log 2>&1 &
+            # Wait a moment to check if the process is running
+            sleep 5
+            if pgrep -f "./app" > /dev/null; then
+              echo "Application started successfully"
+            else
+              echo "Failed to start application"
+              cat output.log
+              exit 1
+            fi
+          '
